@@ -1,0 +1,416 @@
+---
+openapi: 3.0.3
+info:
+  title: Simple API
+  description: API Documentation For Users And Movies
+  version: 1.0.0
+servers:
+- url: http://localhost:3000
+  description: SwaggerHub API Auto Mocking
+
+paths:
+  /auth:
+    post:
+      tags:
+        - Auth
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  default: admin@gmail.com
+                password:
+                  type: string
+                  default: tes12345
+      responses:
+        '200':
+          description: Success
+        '409':
+          description: Conflict
+        '404':
+          description: Not found
+        '500':
+          description: Server error
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/users'
+              required:
+                - id
+                - email
+                - gender
+                - password
+                - role
+      responses:
+        '200':
+          description: Created
+        '409':
+          description: Conflict
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+
+  /users:
+    get:
+      tags:
+      - Users
+      summary: Get all users
+      security:
+        - BearerAuth : []
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+  /users/{id}:
+    get:
+      tags:
+      - Users
+      security:
+        - BearerAuth : []
+      summary: Get user by id
+      parameters:
+      - name: id
+        in: path
+        description: User id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+  /users/paginate:
+    get:
+      tags:
+      - Users
+      summary: Get pagination
+      security:
+        - BearerAuth : []
+      parameters:
+      - name: page
+        in: query
+        description: Page number
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 1
+      - name: limit
+        in: query
+        description: Limit per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 1
+          type: integer
+        example: 10
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Server Error
+  /users/update/{id}:
+    put:
+      tags:
+        - Users
+      summary: Modify a user
+      security:
+        - BearerAuth : []
+      parameters:
+        - name: id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - gender
+                - password
+                - role
+              properties:
+                email:
+                  type: string
+                gender:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+      responses:
+        '200':
+          description: Modified
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+  /users/delete/{id}:
+    delete:
+      tags:
+        - Users
+      summary: Delete user by id
+      security:
+        - BearerAuth : []
+      parameters:
+        - name: id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Removed
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+        '500':
+          description: Server error
+
+
+  /movies:
+    get:
+      tags:
+        - Movies
+      summary: Get all movies
+      security:
+        - BearerAuth : []
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+  /movies/{id}:
+    get:
+      tags:
+        - Movies
+      summary: Get movie by id
+      security:
+        - BearerAuth : []
+      parameters:
+        - name: id
+          in: path
+          description: Movie id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+  /movies/paginate:
+    get:
+      tags:
+        - Movies
+      summary: Get pagination
+      security:
+        - BearerAuth : []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+        - name: limit
+          in: query
+          description: Limit per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          example: 10
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+  /movies/add:
+    post:
+      tags:
+        - Movies
+      summary: Create a movie
+      security:
+        - BearerAuth : []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/movies'
+              required:
+                - id
+                - title
+                - genres
+                - year
+      responses:
+        '200':
+          description: Created
+        '409':
+          description: Conflict
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+  /movies/update/{id}:
+    put:
+      tags:
+        - Movies
+      summary: Modify a movie
+      security:
+        - BearerAuth : []
+      parameters:
+        - name: id
+          in: path
+          description: Movie id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - genres
+                - year
+              properties:
+                title:
+                  type: string
+                genres:
+                  type: string
+                year:
+                  type: string
+      responses:
+        '200':
+          description: Modified
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+  /movies/delete/{id}:
+    delete:
+      tags:
+        - Movies
+      summary: Delete movie by id
+      security:
+        - BearerAuth : []
+      parameters:
+        - name: id
+          in: path
+          description: Movie id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Removed
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    users:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 11
+        email:
+          type: string
+          example: john@gmail.com
+        password:
+          type: string
+          example: xxx123
+        gender:
+          type: string
+          example: Male
+        role:
+          type: string
+          example: Programmer
+    movies:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 11
+        title:
+          type: string
+          example: Avatar
+        genres:
+          type: string
+          example: Action
+        year:
+          type: string
+          example: 2022
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
